@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# User config override
+config.yaml
+
+# User overrides (skill-load injection)
+User.md
+
+# Claude Code
+.claude/
+
+# Gemini CLI
+.gemini/
+
+# Codex
+.codex/
+
+# OpenCode
+.opencode/
+
+# Rust build artifacts (forge-lib submodule)
+lib/target/

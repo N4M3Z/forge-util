@@ -1,0 +1,7 @@
+{
+    "name": "forge-util",
+    "version": "0.1.0",
+    "description": "Utility skills — messaging exports, session management.",
+    "author": {"name": "Martin Zeman"},
+    "skills": ["./skills"]
+}
