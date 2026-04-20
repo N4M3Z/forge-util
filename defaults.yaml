@@ -1,17 +1,3 @@
 # forge-util defaults
 # Override: create config.yaml (gitignored) with only the fields you want to change.
 
-skills:
-    claude:
-        DiscordCLI:
-        SlackCLI:
-        Sessions:
-    gemini:
-        DiscordCLI:
-        SlackCLI:
-    codex:
-        DiscordCLI:
-        SlackCLI:
-    opencode:
-        DiscordCLI:
-        SlackCLI:
