@@ -15,6 +15,7 @@ Knowledge layer module providing standalone utility skills that don't belong in 
 | Discord export        | Active | `/DiscordCLI` | DiscordChatExporter.Cli    |
 | Slack export          | Active | `/SlackCLI`   | slackdump                  |
 | Session management    | Active | `/Sessions`   | recall, repair script      |
+| Claude Code statusline | Active | `/StatusLine` | ccline (CCometixLine)     |
 
 ## Getting started
 
@@ -47,6 +48,7 @@ make install
 | `/DiscordCLI` | Discord message export — DMs, channels, servers                |
 | `/SlackCLI`   | Slack message export — DMs, channels, threads, search          |
 | `/Sessions`   | Claude Code session search, resume, and index repair           |
+| `/StatusLine` | Claude Code statusline — install ccline, switch themes         |
 
 ## Requirements
 
