@@ -1,61 +1,32 @@
-# forge-util — skills, test, and lint
+FORGE ?= forge
 
-LIB_DIR = $(or $(FORGE_LIB),lib)
-
-.PHONY: help install clean verify test lint check init check-lib
+.PHONY: help install validate release clean
 
 help:
-	@echo "forge-util targets:"
-	@echo "  make install  Deploy skills (Claude, Gemini, Codex, OpenCode)"
-	@echo "  make verify   Check skills deployed across all providers"
-	@echo "  make clean    Remove previously installed skills"
-	@echo "  make test     Run module validation"
-	@echo "  make lint     Schema + docs linting"
-	@echo "  make check    Verify module structure"
+	@echo "  make install    deploy content and activate hooks (git + jj)"
+	@echo "  make validate   run all checks (commit + pre-push stages)"
+	@echo "  make release    build release tarball"
+	@echo "  make clean      remove build artifacts"
 
-init:
-	@if [ ! -d $(LIB_DIR)/mk ]; then \
-	  echo "Initializing forge-lib submodule..."; \
-	  git submodule update --init $(LIB_DIR); \
+install:
+	@command -v $(FORGE) >/dev/null 2>&1 \
+	    || { echo "forge not found — ask an AI assistant to execute INSTALL.md"; exit 1; }
+	git config core.hooksPath .githooks
+	chmod +x .githooks/* 2>/dev/null || true
+	$(FORGE) install --target ~
+	@if [ -d .jj ] && command -v jj >/dev/null 2>&1; then \
+	    jj config set --repo aliases.push "[\"util\",\"exec\",\"--\",\"bash\",\"$$PWD/.githooks/jj-push\"]"; \
+	    echo "jj detected: 'jj push' runs the pre-push gate, then 'jj git push'"; \
+	elif [ -d .jj ]; then \
+	    echo "warn: .jj/ present but jj not on PATH — 'jj push' gate NOT wired"; \
 	fi
 
-ifneq ($(wildcard $(LIB_DIR)/mk/common.mk),)
-  include $(LIB_DIR)/mk/common.mk
-endif
+validate:
+	@bash .githooks/pre-commit
+	@bash .githooks/pre-push
 
-ifneq ($(wildcard $(LIB_DIR)/mk/skills/install.mk),)
-  include $(LIB_DIR)/mk/skills/install.mk
-endif
+release:
+	$(FORGE) release .
 
-ifneq ($(wildcard $(LIB_DIR)/mk/skills/verify.mk),)
-  include $(LIB_DIR)/mk/skills/verify.mk
-endif
-
-ifneq ($(wildcard $(LIB_DIR)/mk/lint.mk),)
-  include $(LIB_DIR)/mk/lint.mk
-endif
-
-check-lib:
-	@if [ ! -f "$(LIB_DIR)/Cargo.toml" ]; then \
-	  echo ""; \
-	  echo "ERROR: forge-lib submodule is not initialized."; \
-	  echo "Run: make init && make install"; \
-	  echo ""; \
-	  exit 1; \
-	fi
-
-install: check-lib install-skills
-	@echo "Installation complete. Restart your session or reload skills."
-
-clean: clean-skills
-
-verify: verify-skills
-
-test: $(VALIDATE_MODULE)
-	@$(VALIDATE_MODULE) $(CURDIR)
-
-lint: lint-schema lint-shell lint-docs
-
-check:
-	@test -f module.yaml && echo "  ok module.yaml" || echo "  MISSING module.yaml"
-	@test -x "$(VALIDATE_MODULE)" && echo "  ok validate-module" || echo "  MISSING validate-module (run: make -C $(LIB_DIR) build)"
+clean:
+	rm -rf build/

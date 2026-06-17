@@ -19,5 +19,5 @@ User.md
 # OpenCode
 .opencode/
 
-# Rust build artifacts (forge-lib submodule)
-lib/target/
+# Legacy forge-lib submodule (removed; ignore any leftover checkout)
+lib/
